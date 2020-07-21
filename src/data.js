@@ -1,6 +1,20 @@
 export const normalizedTasks = [
-  { id: 0, status: 0, clientInfo: 'молодец', taskType: 0 },
-  { id: 1, status: 1, clientInfo: 'не молодец', taskType: 2 },
+  {
+    id: 0,
+    status: 0,
+    clientInfo: 'молодец',
+    taskType: 0,
+    start: 'null',
+    // start: '2020-07-12 19:30',
+  },
+  {
+    id: 1,
+    status: 1,
+    clientInfo: 'не молодец',
+    taskType: 2,
+    start: 'null',
+    // start: '2020-07-15 19:30',
+  },
 ];
 
 export const meetings = [

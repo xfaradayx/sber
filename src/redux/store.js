@@ -1,6 +1,9 @@
 import { createStore, applyMiddleware } from 'redux';
 import reducer from './reducers';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
-const enchancer = applyMiddleware();
+import generateMeeting from './middleware/generateMeeting';
 
-export default createStore(reducer, enchancer);
+const enchancer = applyMiddleware(generateMeeting);
+
+export default createStore(reducer, composeWithDevTools(enchancer));
