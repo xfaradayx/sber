@@ -5,17 +5,18 @@ export default (store) => (next) => (action) => {
   if (!action.generateMeeting) next(action);
 
   const { dispatch } = store;
+  const { generateMeeting } = action;
 
-  //   dispatch({
-  //     type: 'SET_MEETING',
-  //     payload: {
-  //       taskId: action.generateMeeting.taskId,
-  //       start: moment(action.generateMeeting.start).toDate(),
-  //       end: moment(action.generateMeeting.start).add(2, 'h').toDate(),
-  //       id: uuid(),
-  //       theme: 'from middleware',
-  //     },
-  //   });
+  // dispatch({
+  //   type: 'SET_MEETING',
+  //   payload: {
+  //     taskId: action.generateMeeting.taskId,
+  //     start: moment(generateMeeting.start).toDate(),
+  //     end: moment(generateMeeting.start).add(2, 'h').toDate(),
+  //     id: uuid(),
+  //     theme: 'from middleware',
+  //   },
+  // });
 
   next(action);
 };
