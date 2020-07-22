@@ -4,13 +4,13 @@ import { SET_MEETING } from '../constants';
 
 export default (state = arrToMap(initialState), action) => {
   const { type, payload } = action;
-
+  console.log(payload);
   switch (action.type) {
     case SET_MEETING:
       const { start, end, id, taskId, theme } = payload || {};
       return {
         ...state,
-        [id]: {
+        [id]: { 
           ...payload,
         },
       };
