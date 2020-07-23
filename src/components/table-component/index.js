@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { setTaskDate } from '../../redux/actions/actions';
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { setTaskDate } from "../../redux/actions/actions";
 
-import { Column, Table } from 'react-virtualized';
+import { Column, Table } from "react-virtualized";
 
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import SaveIcon from '@material-ui/icons/Save';
-import SimpleModal from '../modal';
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import SaveIcon from "@material-ui/icons/Save";
+import SimpleModal from "../modal";
 
-import DatePicker from '../date-picker';
+import DatePicker from "../date-picker";
 
 const TableComponent = ({ taskList, setTaskDate }) => {
   const [editableCell, setEditableCell] = useState(null);
   const [editableInputVal, setEditableInputVal] = useState({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskDataToModal, setTaskDataToModal] = useState(null);
+  const [taskDataToModal, setTaskDataToModal] = useState({});
 
   const handleDbClick = (key) => (e) => {
     setEditableCell(key);
@@ -43,13 +43,11 @@ const TableComponent = ({ taskList, setTaskDate }) => {
   };
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const modalBody =
-    taskDataToModal &&
-    Object.entries(taskDataToModal).map(([key, val]) => (
-      <div>
-        <span>{`${key}: ${val}`}</span>
-      </div>
-    ));
+  const modalBody = taskDataToModal && {
+    ...taskDataToModal,
+    theme: "",
+    comment: "",
+  };
 
   return (
     <>
@@ -64,13 +62,13 @@ const TableComponent = ({ taskList, setTaskDate }) => {
       >
         <Column
           dataKey='id'
-          label={'Task'}
+          label={"Task"}
           width={150}
           cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
         />
         <Column
           dataKey='status'
-          label={'Status'}
+          label={"Status"}
           width={150}
           cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
         />
@@ -94,7 +92,13 @@ const TableComponent = ({ taskList, setTaskDate }) => {
             return editableCell === `${rowIndex}x${columnIndex}` ? (
               <Grid container>
                 <Grid item xs={6}>
-                  <DatePicker onChange={handleChange(rowData.id)} />
+                  <DatePicker
+                    onChange={handleChange(rowData.id)}
+                    id='datetime-local'
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
                 </Grid>
                 <Grid item xs={6}>
                   <Button

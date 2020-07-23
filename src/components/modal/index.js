@@ -1,6 +1,15 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
+import React, { useState } from "react";
+import { connect } from "react-redux";
+
+import useInput from "../../hooks/use-input";
+
+import { makeStyles } from "@material-ui/core/styles";
+import Modal from "@material-ui/core/Modal";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import SaveIcon from "@material-ui/icons/Save";
+
+import DatePicker from "../date-picker";
 
 function getModalStyle() {
   const top = 50;
@@ -15,22 +24,82 @@ function getModalStyle() {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    position: 'absolute',
+    "&:focus": {
+      outline: "none",
+    },
+    position: "absolute",
     width: 400,
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+    borderRadius: "10px",
+  },
+  input: {
+    marginTop: "20px",
   },
 }));
 
-const SimpleModal = ({ toRender = 'пусто', ...props }) => {
+const SimpleModal = ({ toRender = {}, ...props }) => {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
 
+  const theme = useInput("");
+  const comment = useInput("");
+  const start = useInput("");
+
+  const actions = {
+    theme: (e) => theme.onChange(e.target.value),
+    comment: (e) => comment.onChange(e.target.value),
+    start: (e) => start.onChange(e.target.value),
+  };
+
+  const handleChange = (key) => (e) => {
+    console.log(theme.value, comment.value);
+    actions[key](e);
+  };
+
+  const handleTaskUpdate = () => {
+    console.log({
+      taskId: toRender.id,
+      start: start.value,
+      comment: comment.value,
+      theme: theme.value,
+    });
+  };
+
   const body = (
     <div style={modalStyle} className={classes.paper}>
-      {toRender}
+      {Object.entries(toRender).map(([key, val]) => {
+        return key === "start" ? (
+          <DatePicker
+            fullWidth
+            label={key}
+            id='datetime-local1'
+            InputLabelProps={{
+              shrink: true,
+            }}
+            className={classes.input}
+          />
+        ) : (
+          <TextField
+            fullWidth
+            label={key}
+            defaultValue={val}
+            disabled={key !== "theme" && key !== "comment"}
+            className={classes.input}
+            onChange={handleChange(key)}
+          />
+        );
+      })}
+      <Button
+        variant='contained'
+        color='primary'
+        size='small'
+        startIcon={<SaveIcon />}
+        className={classes.input}
+        onClick={handleTaskUpdate}
+      >
+        Save
+      </Button>
     </div>
   );
 
