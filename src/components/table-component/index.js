@@ -4,10 +4,10 @@ import { setTaskDate } from '../../redux/actions/actions';
 
 import { Column, Table } from 'react-virtualized';
 
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
-import SimpleModal from '../modal';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Modal from '@material-ui/core/Modal';
 
 import DatePicker from '../date-picker';
 
@@ -15,18 +15,14 @@ const TableComponent = ({ taskList, setTaskDate }) => {
   const [editableCell, setEditableCell] = useState(null);
   const [editableInputVal, setEditableInputVal] = useState({});
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskDataToModal, setTaskDataToModal] = useState(null);
-
   const handleDbClick = (key) => (e) => {
     setEditableCell(key);
   };
 
-  const handleUpdateTask = (taskData) => (e) => {
-    const { id } = taskData;
-    const currInputVal = editableInputVal[id];
-
-    setTaskDate({ ...taskData, start: currInputVal }, currInputVal);
+  const handleUpdateTask = (taskId) => (e) => {
+    // console.log('data: ', taskId, ' ', editableInputVal[taskId]);
+    const currInputVal = editableInputVal[taskId];
+    setTaskDate(taskId, currInputVal);
     setEditableCell(null);
   };
 
@@ -37,93 +33,71 @@ const TableComponent = ({ taskList, setTaskDate }) => {
     }));
   };
 
-  const handleClick = (taskData) => {
-    setTaskDataToModal(taskData);
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => setIsModalOpen(false);
-
-  const modalBody =
-    taskDataToModal &&
-    Object.entries(taskDataToModal).map(([key, val]) => (
-      <div>
-        <span>{`${key}: ${val}`}</span>
-      </div>
-    ));
+  const handleSubmit = (id) => {};
 
   return (
-    <>
-      <Table
-        width={1400}
-        height={300}
-        headerHeight={50}
-        rowHeight={50}
-        rowCount={taskList.length}
-        rowGetter={({ index }) => taskList[index]}
-        onRowClick={({ rowData }) => handleClick(rowData)}
-      >
-        <Column
-          dataKey='id'
-          label={'Task'}
-          width={150}
-          cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
-        />
-        <Column
-          dataKey='status'
-          label={'Status'}
-          width={150}
-          cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
-        />
-        <Column
-          dataKey='clientInfo'
-          label='Client info'
-          width={150}
-          cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
-        />
-        <Column
-          dataKey='taskType'
-          label='Task type'
-          width={150}
-          cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
-        />
-        <Column
-          dataKey='start'
-          label='Start date'
-          width={400}
-          cellRenderer={({ cellData, rowData, rowIndex, columnIndex }) => {
-            return editableCell === `${rowIndex}x${columnIndex}` ? (
-              <Grid container>
-                <Grid item xs={6}>
-                  <DatePicker onChange={handleChange(rowData.id)} />
-                </Grid>
-                <Grid item xs={6}>
-                  <Button
-                    variant='contained'
-                    color='primary'
-                    size='small'
-                    startIcon={<SaveIcon />}
-                    onClick={handleUpdateTask(rowData)}
-                  >
-                    Save
-                  </Button>
-                </Grid>
-              </Grid>
-            ) : (
-              <div onDoubleClick={handleDbClick(`${rowIndex}x${columnIndex}`)}>
-                {cellData}
-              </div>
-            );
-          }}
-        />
-      </Table>
-      <SimpleModal
-        toRender={modalBody}
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        aria-labelledby='simple-modal-title'
-        aria-describedby='simple-modal-description'
+    <Table
+      width={1200}
+      height={300}
+      headerHeight={50}
+      rowHeight={50}
+      rowCount={taskList.length}
+      rowGetter={({ index }) => taskList[index]}
+    >
+      <Column
+        dataKey='id'
+        label={'Task'}
+        width={150}
+        cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
       />
-    </>
+      <Column
+        dataKey='status'
+        label={'Status'}
+        width={150}
+        cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
+      />
+      <Column
+        dataKey='clientInfo'
+        label='Client info'
+        width={150}
+        cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
+      />
+      <Column
+        dataKey='taskType'
+        label='Task type'
+        width={150}
+        cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
+      />
+      <Column
+        dataKey='start'
+        label='Start date'
+        width={400}
+        cellRenderer={({ cellData, rowData, rowIndex, columnIndex }) => {
+          return editableCell === `${rowIndex}x${columnIndex}` ? (
+            <Grid container>
+              <Grid item xs={6}>
+                <DatePicker onChange={handleChange(rowData.id)} />
+              </Grid>
+              <Grid item xs={6}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  size='small'
+                  startIcon={<SaveIcon />}
+                  onClick={handleUpdateTask(rowData.id)}
+                >
+                  Save
+                </Button>
+              </Grid>
+            </Grid>
+          ) : (
+            <div onDoubleClick={handleDbClick(`${rowIndex}x${columnIndex}`)}>
+              {cellData}
+            </div>
+          );
+        }}
+      />
+    </Table>
   );
 };
 
