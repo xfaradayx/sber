@@ -1,28 +1,32 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { setTaskDate } from '../../redux/actions/actions';
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { setTaskDate } from "../../redux/actions/actions";
 
-import { Column, Table } from 'react-virtualized';
+import { Column, Table } from "react-virtualized";
 
-import SaveIcon from '@material-ui/icons/Save';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Modal from '@material-ui/core/Modal';
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import SaveIcon from "@material-ui/icons/Save";
+import SimpleModal from "../modal";
 
-import DatePicker from '../date-picker';
+import DatePicker from "../date-picker";
 
 const TableComponent = ({ taskList, setTaskDate }) => {
   const [editableCell, setEditableCell] = useState(null);
   const [editableInputVal, setEditableInputVal] = useState({});
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [taskDataToModal, setTaskDataToModal] = useState({});
+
   const handleDbClick = (key) => (e) => {
     setEditableCell(key);
   };
 
-  const handleUpdateTask = (taskId) => (e) => {
-    // console.log('data: ', taskId, ' ', editableInputVal[taskId]);
-    const currInputVal = editableInputVal[taskId];
-    setTaskDate(taskId, currInputVal);
+  const handleUpdateTask = (taskData) => (e) => {
+    const { id } = taskData;
+    const currInputVal = editableInputVal[id];
+
+    setTaskDate({ ...taskData, start: currInputVal }, currInputVal);
     setEditableCell(null);
   };
 
@@ -33,71 +37,97 @@ const TableComponent = ({ taskList, setTaskDate }) => {
     }));
   };
 
-  const handleSubmit = (id) => {};
+  const handleClick = (taskData) => {
+    setTaskDataToModal(taskData);
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const modalBody = taskDataToModal && {
+    ...taskDataToModal,
+    theme: "",
+    comment: "",
+  };
 
   return (
-    <Table
-      width={1200}
-      height={300}
-      headerHeight={50}
-      rowHeight={50}
-      rowCount={taskList.length}
-      rowGetter={({ index }) => taskList[index]}
-    >
-      <Column
-        dataKey='id'
-        label={'Task'}
-        width={150}
-        cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
-      />
-      <Column
-        dataKey='status'
-        label={'Status'}
-        width={150}
-        cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
-      />
-      <Column
-        dataKey='clientInfo'
-        label='Client info'
-        width={150}
-        cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
-      />
-      <Column
-        dataKey='taskType'
-        label='Task type'
-        width={150}
-        cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
-      />
-      <Column
-        dataKey='start'
-        label='Start date'
-        width={400}
-        cellRenderer={({ cellData, rowData, rowIndex, columnIndex }) => {
-          return editableCell === `${rowIndex}x${columnIndex}` ? (
-            <Grid container>
-              <Grid item xs={6}>
-                <DatePicker onChange={handleChange(rowData.id)} />
+    <>
+      <Table
+        width={1400}
+        height={300}
+        headerHeight={50}
+        rowHeight={50}
+        rowCount={taskList.length}
+        rowGetter={({ index }) => taskList[index]}
+        onRowClick={({ rowData }) => handleClick(rowData)}
+      >
+        <Column
+          dataKey='id'
+          label={"Task"}
+          width={150}
+          cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
+        />
+        <Column
+          dataKey='status'
+          label={"Status"}
+          width={150}
+          cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
+        />
+        <Column
+          dataKey='clientInfo'
+          label='Client info'
+          width={150}
+          cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
+        />
+        <Column
+          dataKey='taskType'
+          label='Task type'
+          width={150}
+          cellRenderer={({ cellData, columnData }) => <b>{cellData}</b>}
+        />
+        <Column
+          dataKey='start'
+          label='Start date'
+          width={400}
+          cellRenderer={({ cellData, rowData, rowIndex, columnIndex }) => {
+            return editableCell === `${rowIndex}x${columnIndex}` ? (
+              <Grid container>
+                <Grid item xs={6}>
+                  <DatePicker
+                    onChange={handleChange(rowData.id)}
+                    id='datetime-local'
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    size='small'
+                    startIcon={<SaveIcon />}
+                    onClick={handleUpdateTask(rowData)}
+                  >
+                    Save
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <Button
-                  variant='contained'
-                  color='primary'
-                  size='small'
-                  startIcon={<SaveIcon />}
-                  onClick={handleUpdateTask(rowData.id)}
-                >
-                  Save
-                </Button>
-              </Grid>
-            </Grid>
-          ) : (
-            <div onDoubleClick={handleDbClick(`${rowIndex}x${columnIndex}`)}>
-              {cellData}
-            </div>
-          );
-        }}
+            ) : (
+              <div onDoubleClick={handleDbClick(`${rowIndex}x${columnIndex}`)}>
+                {cellData}
+              </div>
+            );
+          }}
+        />
+      </Table>
+      <SimpleModal
+        toRender={modalBody}
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        aria-labelledby='simple-modal-title'
+        aria-describedby='simple-modal-description'
       />
-    </Table>
+    </>
   );
 };
 
