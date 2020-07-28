@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from "react";
+import { connect } from "react-redux";
 
-import useInput from '../../../hooks/use-input';
+import useInput from "../../../hooks/use-input";
 
-import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import SaveIcon from '@material-ui/icons/Save';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
+import { makeStyles } from "@material-ui/core/styles";
+import Modal from "@material-ui/core/Modal";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import SaveIcon from "@material-ui/icons/Save";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
 
-import DatePicker from '../../date-picker';
+import DatePicker from "../../date-picker";
 
 function getModalStyle() {
   const top = 50;
@@ -28,24 +28,24 @@ function getModalStyle() {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    '&:focus': {
-      outline: 'none',
+    "&:focus": {
+      outline: "none",
     },
-    position: 'absolute',
+    position: "absolute",
     width: 400,
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2, 4, 3),
-    borderRadius: '10px',
+    borderRadius: "10px",
   },
   input: {
-    marginTop: '20px',
+    marginTop: "20px",
   },
   root: {
-    width: '100%',
+    width: "100%",
   },
   formControl: {
-    width: '100%',
-    marginTop: '20px',
+    width: "100%",
+    marginTop: "20px",
   },
 }));
 
@@ -59,8 +59,8 @@ const SimpleModal = ({
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
 
-  const result = useInput('');
-  const resultComment = useInput('');
+  const result = useInput("");
+  const resultComment = useInput("");
 
   const actions = {
     result: (e) => result.onChange(e.target.value),
@@ -91,9 +91,9 @@ const SimpleModal = ({
   const body = (
     <div style={modalStyle} className={classes.paper}>
       <form method='POST' onSubmit={onSubmit}>
-        {Object.entries(meetingList || {}).map(([key, val]) => {
-          return key === 'result' ? (
-            <FormControl className={classes.formControl}>
+        {Object.entries(meetingList).map(([key, val]) => {
+          return key === "result" ? (
+            <FormControl key={key} className={classes.formControl}>
               <InputLabel id='demo-simple-select-label'>Result</InputLabel>
               <Select
                 id='demo-simple-select'
@@ -103,18 +103,19 @@ const SimpleModal = ({
                 className={classes.input}
                 name='demo-simple-select-label'
               >
-                <MenuItem value={'Успех'}>Успех</MenuItem>
-                <MenuItem value={'Отказ'}>Отказ</MenuItem>
+                <MenuItem value={"Успех"}>Успех</MenuItem>
+                <MenuItem value={"Отказ"}>Отказ</MenuItem>
               </Select>
             </FormControl>
           ) : (
-            key !== 'title' && (
+            key !== "title" && (
               <TextField
-                required={key === 'resultComment' && result.value === 'Отказ'}
+                key={key}
+                required={key === "resultComment" && result.value === "Отказ"}
                 fullWidth
                 label={key}
                 defaultValue={val}
-                disabled={key !== 'result' && key !== 'resultComment'}
+                disabled={key !== "result" && key !== "resultComment"}
                 className={classes.input}
                 onChange={handleChange(key)}
               />

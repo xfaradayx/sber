@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from "react";
+import { connect } from "react-redux";
 
-import useInput from '../../hooks/use-input';
+import useInput from "../../hooks/use-input";
 
-import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import SaveIcon from '@material-ui/icons/Save';
+import { makeStyles } from "@material-ui/core/styles";
+import Modal from "@material-ui/core/Modal";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import SaveIcon from "@material-ui/icons/Save";
 
-import DatePicker from '../date-picker';
+import DatePicker from "../date-picker";
 
 function getModalStyle() {
   const top = 50;
@@ -24,17 +24,17 @@ function getModalStyle() {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    '&:focus': {
-      outline: 'none',
+    "&:focus": {
+      outline: "none",
     },
-    position: 'absolute',
+    position: "absolute",
     width: 400,
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2, 4, 3),
-    borderRadius: '10px',
+    borderRadius: "10px",
   },
   input: {
-    marginTop: '20px',
+    marginTop: "20px",
   },
 }));
 
@@ -42,9 +42,9 @@ const SimpleModal = ({ taskData = {}, onSave, onClose, ...props }) => {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
 
-  const theme = useInput('');
-  const comment = useInput('');
-  const start = useInput('');
+  const theme = useInput("");
+  const comment = useInput("");
+  const start = useInput("");
 
   const actions = {
     theme: (e) => theme.onChange(e.target.value),
@@ -57,7 +57,7 @@ const SimpleModal = ({ taskData = {}, onSave, onClose, ...props }) => {
   };
 
   const handleTaskUpdate = () => {
-    console.log('modal start', start.value);
+    console.log("modal start", start.value);
     const data = {
       ...taskData,
       comment: comment.value,
@@ -71,8 +71,9 @@ const SimpleModal = ({ taskData = {}, onSave, onClose, ...props }) => {
   const body = (
     <div style={modalStyle} className={classes.paper}>
       {Object.entries(taskData).map(([key, val]) => {
-        return key === 'start' ? (
+        return key === "start" ? (
           <DatePicker
+            key={key}
             id='datetime-local1'
             fullWidth
             className={classes.input}
@@ -87,7 +88,7 @@ const SimpleModal = ({ taskData = {}, onSave, onClose, ...props }) => {
             fullWidth
             label={key}
             defaultValue={val}
-            disabled={key !== 'theme' && key !== 'comment'}
+            disabled={key !== "theme" && key !== "comment"}
             className={classes.input}
             onChange={handleChange(key)}
           />
