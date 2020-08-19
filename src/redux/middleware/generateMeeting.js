@@ -23,11 +23,7 @@ export default (store) => (next) => (action) => {
 
     const taskHasMeeting = Object.values(state.meetings).reduce((acc, item) => {
       return item.taskId === id ? true : acc;
-      // acc = item.taskId === id && true;
-      // return acc;
-    }, false);
-
-    // console.log(task HasMeeting);
+    }, false); 
 
     if (taskHasMeeting) return;
 
